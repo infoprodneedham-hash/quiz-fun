@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindForge: Brain & Language Puzzles</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            amber: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+            },
+            emerald: {
+              500: '#10b981',
+              600: '#059669',
+            },
+            purple: {
+              500: '#8b5cf6',
+              600: '#7c3aed',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+    h1, h2, h3, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    .tile-slot {
+      min-width: 44px;
+      height: 52px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tile-btn {
+      touch-action: manipulation;
+      transition: all 0.15s ease-out;
+    }
+    .tile-btn:active {
+      transform: scale(0.92);
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .animate-pulse-subtle {
+      animation: pulse-subtle 2.5s infinite ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-30 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="app.showCatalog()">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/25">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="font-heading font-extrabold text-xl tracking-tight bg-gradient-to-r from-brand-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">MindForge</span>
+          <span class="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Brain & Language</span>
+        </div>
+      </div>
+
+      <!-- Stats Counters & Controls -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        <!-- Daily Challenge Button -->
+        <button id="dailyChallengeBtn" onclick="app.openDailyChallenge()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs sm:text-sm font-semibold transition-all">
+          <span>⚡</span>
+          <span class="hidden xs:inline">Daily Puzzle</span>
+        </button>
+
+        <!-- Streak Badge -->
+        <div class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 text-xs sm:text-sm font-bold">
+          <span>🔥</span>
+          <span id="streakCount">0</span>
+          <span class="hidden sm:inline text-xs font-medium text-orange-500/80">streak</span>
+        </div>
+
+        <!-- Stars Earned -->
+        <div class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 text-xs sm:text-sm font-bold">
+          <span>⭐</span>
+          <span id="totalStars">0</span>
+        </div>
+
+        <!-- Sound Toggle -->
+        <button id="soundToggle" onclick="audioManager.toggleSound()" title="Toggle Sound FX" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
+          <svg id="soundIconOn" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+          </svg>
+          <svg id="soundIconOff" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z m12-2l4 4m0-4l-4 4"/>
+          </svg>
+        </button>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button onclick="app.toggleTheme()" title="Toggle Dark/Light Mode" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
+          <svg id="themeIconSun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+          <svg id="themeIconMoon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    
+    <!-- VIEW 1: CATALOG & BROWSER VIEW -->
+    <div id="catalogView" class="space-y-6">
+      
+      <!-- Hero Banner & Stats Summary -->
+      <div class="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-xl shadow-blue-500/10">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2 max-w-xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold tracking-wide uppercase">
+              <span>✦ Multi-Tier Cognitive Workout</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">Sharpen your mind across Math, Words & Logic.</h1>
+            <p class="text-blue-100 text-sm sm:text-base leading-relaxed">Solve visual algebra balance scales, unscramble multi-word anagrams, crack rebus riddles, and master hybrid cross-discipline challenges.</p>
+          </div>
+          <div class="grid grid-cols-3 gap-3 sm:gap-4 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 text-center min-w-[260px]">
+            <div>
+              <div id="heroSolvedCount" class="text-2xl sm:text-3xl font-extrabold">0</div>
+              <div class="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Solved</div>
+            </div>
+            <div>
+              <div id="heroTotalCount" class="text-2xl sm:text-3xl font-extrabold">0</div>
+              <div class="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Puzzles</div>
+            </div>
+            <div>
+              <div id="heroAccuracy" class="text-2xl sm:text-3xl font-extrabold">100%</div>
+              <div class="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Accuracy</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Toolbar -->
+      <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between transition-colors">
+        
+        <!-- Category Filter Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 custom-scroll" id="categoryFilters">
+          <button onclick="app.setFilter('category', 'all')" data-cat="all" class="cat-pill active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap bg-brand-600 text-white shadow-sm">
+            All Categories
+          </button>
+          <button onclick="app.setFilter('category', 'math')" data-cat="math" class="cat-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all whitespace-nowrap">
+            📐 Mathematics
+          </button>
+          <button onclick="app.setFilter('category', 'language')" data-cat="language" class="cat-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all whitespace-nowrap">
+            📖 Language & Words
+          </button>
+          <button onclick="app.setFilter('category', 'hybrid')" data-cat="hybrid" class="cat-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all whitespace-nowrap">
+            🧩 Visual & Hybrid
+          </button>
+        </div>
+
+        <!-- Difficulty & Mode Selectors -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Difficulty Filters -->
+          <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl" id="difficultyFilters">
+            <button onclick="app.setFilter('diff', 'all')" data-diff="all" class="diff-btn active text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white">All</button>
+            <button onclick="app.setFilter('diff', 'beginner')" data-diff="beginner" class="diff-btn text-xs font-semibold px-2.5 py-1.5 rounded-lg text-emerald-600 dark:text-emerald-400">Warm-up</button>
+            <button onclick="app.setFilter('diff', 'intermediate')" data-diff="intermediate" class="diff-btn text-xs font-semibold px-2.5 py-1.5 rounded-lg text-blue-600 dark:text-blue-400">Challenger</button>
+            <button onclick="app.setFilter('diff', 'advanced')" data-diff="advanced" class="diff-btn text-xs font-semibold px-2.5 py-1.5 rounded-lg text-purple-600 dark:text-purple-400">Mastermind</button>
+          </div>
+
+          <!-- Mode Filter -->
+          <select id="modeFilter" onchange="app.setFilter('mode', this.value)" class="text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 outline-none cursor-pointer">
+            <option value="all">All Modes</option>
+            <option value="interactive">Interactive Puzzles Only</option>
+            <option value="quiz">Speed / Multiple-Choice Only</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Puzzle Grid -->
+      <div id="puzzleGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Empty state container -->
+      <div id="emptyCatalogState" class="hidden text-center py-16 px-4 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+        <div class="text-4xl mb-3">🔍</div>
+        <h3 class="text-lg font-bold">No challenges match these filters</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Try resetting the difficulty or category filter to discover more puzzles.</p>
+        <button onclick="app.resetFilters()" class="mt-4 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-700 transition">Reset All Filters</button>
+      </div>
+    </div>
+
+    <!-- VIEW 2: ACTIVE PUZZLE ARENA -->
+    <div id="arenaView" class="hidden max-w-4xl mx-auto space-y-6">
+      
+      <!-- Top Arena Header -->
+      <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <button onclick="app.showCatalog()" class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-blue-400 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          <span>All Challenges</span>
+        </button>
+
+        <div class="flex items-center gap-3">
+          <span id="arenaDifficultyBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">Beginner</span>
+          <span id="arenaCategoryBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">Math</span>
+        </div>
+      </div>
+
+      <!-- Puzzle Card Active Play Area -->
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden transition-colors">
+        
+        <!-- Header Banner with Title and Prompt -->
+        <div class="p-6 sm:p-8 border-b border-slate-100 dark:border-slate-800/80 bg-gradient-to-b from-slate-50/50 dark:from-slate-800/20 to-transparent">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xs uppercase tracking-wider font-extrabold text-brand-600 dark:text-blue-400 mb-1" id="arenaTypeLabel">Visual Balance Puzzle</div>
+              <h2 id="arenaTitle" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Fruit Weight Logic</h2>
+            </div>
+            <!-- Star Rating indicator for this puzzle -->
+            <div id="arenaStarIndicator" class="flex text-amber-400 text-lg">
+              <span>☆</span><span>☆</span><span>☆</span>
+            </div>
+          </div>
+          <p id="arenaDescription" class="mt-3 text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">Determine the value of each symbol to calculate the missing total.</p>
+        </div>
+
+        <!-- Dynamic Puzzle Interactive Workspace -->
+        <div id="arenaInteractiveZone" class="p-6 sm:p-8 flex flex-col items-center justify-center min-h-[300px] bg-slate-50/30 dark:bg-slate-950/20">
+          <!-- Dynamically inserted by puzzle renderer -->
+        </div>
+
+        <!-- Feedback & Hints Tray -->
+        <div class="p-6 sm:p-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50 flex flex-col gap-4">
+          
+          <!-- Hint Display Box (collapsible) -->
+          <div id="hintBox" class="hidden p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-sm">
+            <div class="flex items-center gap-2 font-bold mb-1 text-amber-800 dark:text-amber-300">
+              <span>💡 Hint:</span>
+            </div>
+            <div id="hintText"></div>
+          </div>
+
+          <!-- Explanation Box (shown after solving) -->
+          <div id="explanationBox" class="hidden p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-sm">
+            <div class="flex items-center gap-2 font-bold mb-1 text-emerald-800 dark:text-emerald-300">
+              <span>🎉 Explanation & Breakdown:</span>
+            </div>
+            <div id="explanationText"></div>
+          </div>
+
+          <!-- Action Controls Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div class="flex items-center gap-2">
+              <button id="hintBtn" onclick="app.requestHint()" class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-amber-300 dark:border-amber-700/60 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs sm:text-sm font-semibold transition">
+                <span>💡 Hint</span>
+                <span id="hintCountBadge" class="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-200 font-bold">1/2</span>
+              </button>
+
+              <button id="resetPuzzleBtn" onclick="app.resetCurrentPuzzle()" class="px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs sm:text-sm font-semibold transition">
+                ↺ Reset
+              </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button id="submitBtn" onclick="app.checkAnswer()" class="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/25 active:scale-95 transition">
+                Check Solution
+              </button>
+              <button id="nextPuzzleBtn" onclick="app.nextPuzzle()" class="hidden px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition flex items-center gap-1.5">
+                <span>Next Challenge</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold border"></div>
+
+  <!-- Audio Manager using Web Audio API -->
+  <script>
+    class SoundEffects {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      toggleSound() {
+        this.enabled = !this.enabled;
+        const onIcon = document.getElementById('soundIconOn');
+        const offIcon = document.getElementById('soundIconOff');
+        if (this.enabled) {
+          onIcon.classList.remove('hidden');
+          offIcon.classList.add('hidden');
+          app.showToast('Sound Effects Enabled 🔊', 'info');
+          this.playClick();
+        } else {
+          onIcon.classList.add('hidden');
+          offIcon.classList.remove('hidden');
+          app.showToast('Sound Muted 🔇', 'info');
+        }
+      }
+      playTone(freq, type = 'sine', duration = 0.1, startDelay = 0) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime + startDelay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+      playClick() {
+        this.playTone(600, 'triangle', 0.04);
+      }
+      playTileSelect() {
+        this.playTone(820, 'sine', 0.06);
+      }
+      playCorrect() {
+        if (!this.enabled) return;
+        // Harmonic celebratory arpeggio
+        this.playTone(523.25, 'triangle', 0.12, 0);       // C5
+        this.playTone(659.25, 'triangle', 0.12, 0.08);    // E5
+        this.playTone(783.99, 'triangle', 0.14, 0.16);    // G5
+        this.playTone(1046.50, 'triangle', 0.28, 0.24);   // C6
+      }
+      playWrong() {
+        if (!this.enabled) return;
+        this.playTone(280, 'sawtooth', 0.12, 0);
+        this.playTone(210, 'sawtooth', 0.18, 0.1);
+      }
+      playHint() {
+        this.playTone(900, 'sine', 0.1, 0);
+        this.playTone(1200, 'sine', 0.15, 0.09);
+      }
+    }
+    const audioManager = new SoundEffects();
+  </script>
+
+  <!-- Puzzle Data Bank -->
+  <script>
+    const PUZZLE_DATA = [
+      // 1. BEGINNER - MATH (Interactive Algebra Visual Balance)
+      {
+        id: 'math-b-1',
+        title: 'Fresh Orchard Equations',
+        category: 'math',
+        difficulty: 'beginner',
+        mode: 'interactive',
+        type: 'visual_algebra',
+        description: 'Observe the visual balance equations below to discover the numeric weight of each item, then solve for the mystery total.',
+        items: [
+          { icon: '🍎', name: 'Apple', val: 5 },
+          { icon: '🍌', name: 'Banana', val: 3 },
+          { icon: '🍇', name: 'Grapes', val: 8 }
+        ],
+        equations: [
+          '🍎 + 🍎 + 🍎 = 15',
+          '🍎 + 🍌 = 8',
+          '🍇 - 🍌 = 5',
+          '🍎 + 🍌 + 🍇 = ?'
+        ],
+        targetAnswer: 16,
+        inputHint: 'Enter the numeric result',
+        hints: [
+          'From the first equation: 3 Apples = 15, so 1 Apple = 15 ÷ 3 = 5.',
+          'With Apple = 5, 5 + Banana = 8, so Banana = 3. Now compute Grapes: Grapes - 3 = 5, so Grapes = 8.'
+        ],
+        explanation: '1 Apple = 5. Banana = 8 - 5 = 3. Grapes = 5 + 3 = 8. Therefore: 5 + 3 + 8 = 16.'
+      },
+
+      // 2. BEGINNER - LANGUAGE (Interactive Anagram Tile Arranger)
+      {
+        id: 'lang-b-1',
+        title: 'Starlight Scramble',
+        category: 'language',
+        difficulty: 'beginner',
+        mode: 'interactive',
+        type: 'anagram',
+        description: 'Tap letter tiles to unscramble the letters into a word meaning: "A celestial body of hot glowing gas".',
+        scrambled: ['T', 'S', 'A', 'R'],
+        targetWord: 'STAR',
+        clue: 'Twinkles in the night sky.',
+        hints: [
+          'It rhymes with FAR and CAR.',
+          'The first letter is S, followed by T.'
+        ],
+        explanation: 'S-T-A-R spells "STAR". The sun is also our closest star!'
+      },
+
+      // 3. BEGINNER - HYBRID / VISUAL (Rebus Puzzle)
+      {
+        id: 'hyb-b-1',
+        title: 'Visual Pictogram Riddle',
+        category: 'hybrid',
+        difficulty: 'beginner',
+        mode: 'interactive',
+        type: 'rebus',
+        description: 'Examine the visual rebus representation below and type in the common two-word idiom or compound phrase.',
+        visualDisplay: `
+          <div class="flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 select-none">
+            <div class="text-xs uppercase font-bold text-slate-500 mb-2">Visual Clue</div>
+            <div class="text-4xl font-extrabold tracking-wider text-slate-800 dark:text-slate-100 font-mono py-2">
+              STAND
+            </div>
+            <div class="w-40 h-1 bg-slate-400 dark:bg-slate-600 my-1 rounded-full"></div>
+            <div class="text-xl font-bold text-blue-600 dark:text-blue-400 font-mono">
+              I
+            </div>
+          </div>
+        `,
+        targetAnswer: 'I UNDERSTAND',
+        targetAlternatives: ['UNDERSTAND', 'I UNDER STAND'],
+        hints: [
+          'Notice the relative position of the word "STAND" and the letter "I".',
+          'Where is the letter "I" positioned relative to "STAND"?'
+        ],
+        explanation: '"I" is literally under "STAND", creating the clever pictogram for "I UNDERSTAND" (or Understand).'
+      },
+
+      // 4. INTERMEDIATE - MATH (Number Sequence Grid)
+      {
+        id: 'math-i-1',
+        title: 'Spiral Matrix Sequence',
+        category: 'math',
+        difficulty: 'intermediate',
+        mode: 'interactive',
+        type: 'sequence_grid',
+        description: 'Find the rule connecting rows and columns to determine the value of the missing cell [ ? ].',
+        matrix: [
+          [2, 3, 13],
+          [4, 5, 41],
+          [3, 6, '?']
+        ],
+        ruleNote: 'Examine: Row 1 has 2, 3 -> 13. Row 2 has 4, 5 -> 41.',
+        targetAnswer: 45,
+        hints: [
+          'Notice powers or squares: What is 2² and 3²? 4 + 9 = 13.',
+          'Check row 2: 4² (16) + 5² (25) = 41. Apply this same formula to row 3: 3² + 6².'
+        ],
+        explanation: 'Each row follows the rule: a² + b² = c. For the third row: 3² + 6² = 9 + 36 = 45.'
+      },
+
+      // 5. INTERMEDIATE - LANGUAGE (Interactive Anagram)
+      {
+        id: 'lang-i-1',
+        title: 'Cryptic Earth Anagram',
+        category: 'language',
+        difficulty: 'intermediate',
+        mode: 'interactive',
+        type: 'anagram',
+        description: 'Rearrange the letter tiles to form an English word meaning: "A great feeling of energetic excitement and enthusiasm".',
+        scrambled: ['Z', 'E', 'A', 'L', 'O', 'U', 'S'],
+        targetWord: 'ZEALOUS',
+        clue: 'Related to "zeal". Someone passionate about an endeavor.',
+        hints: [
+          'Starts with the letter Z and ends with S.',
+          'Contains the common adjective suffix "-OUS".'
+        ],
+        explanation: 'Z-E-A-L-O-U-S describes passionate devotion or ardent enthusiasm.'
+      },
+
+      // 6. INTERMEDIATE - HYBRID (Word-Value Math Balance)
+      {
+        id: 'hyb-i-1',
+        title: 'Alphanumeric Equation Weight',
+        category: 'hybrid',
+        difficulty: 'intermediate',
+        mode: 'interactive',
+        type: 'word_math',
+        description: 'In this cognitive system, every letter equals its position in the alphabet (A=1, B=2, C=3 ... Z=26). Calculate the numeric sum of the target word.',
+        word: 'BRAIN',
+        equationBreakdown: 'B(2) + R(18) + A(1) + I(9) + N(14)',
+        targetAnswer: 44,
+        hints: [
+          'Letter values: B=2, R=18, A=1, I=9, N=14.',
+          'Add them step by step: (2 + 18) + (1 + 9) + 14 = 20 + 10 + 14.'
+        ],
+        explanation: 'B=2, R=18, A=1, I=9, N=14. 2 + 18 + 1 + 9 + 14 = 44.'
+      },
+
+      // 7. ADVANCED - MATH (Mini KenKen / Latin Square Grid Puzzle)
+      {
+        id: 'math-a-1',
+        title: 'The 3x3 KenKen Matrix',
+        category: 'math',
+        difficulty: 'advanced',
+        mode: 'interactive',
+        type: 'grid_kenken',
+        description: 'Fill the 3x3 grid using numbers 1, 2, and 3 only. Every row and column must contain exactly one 1, 2, and 3 with no repetitions.',
+        preset: [
+          [null, null, 3],
+          [null, 1, null],
+          [2, null, null]
+        ],
+        cages: 'Clue: Top-left cell must be 1 to satisfy row 1 and column 1 logic.',
+        targetGrid: [
+          [1, 2, 3],
+          [3, 1, 2],
+          [2, 3, 1]
+        ],
+        hints: [
+          'Row 1 has [?, ?, 3]. Column 1 already has 2 in the third row, so cell (0,0) cannot be 2. Cell (0,0) must be 1!',
+          'If (0,0) is 1, then (0,1) must be 2 to complete Row 1 with [1, 2, 3]. Proceed row by row.'
+        ],
+        explanation: 'Applying elimination: Row 1 is [1, 2, 3], Row 2 is [3, 1, 2], and Row 3 is [2, 3, 1]. Every row and column has digits 1-3 with zero repeats!'
+      },
+
+      // 8. ADVANCED - LANGUAGE (Vocabulary Cryptogram / Riddle)
+      {
+        id: 'lang-a-1',
+        title: 'Paradoxical Antonym Quiz',
+        category: 'language',
+        difficulty: 'advanced',
+        mode: 'quiz',
+        type: 'multiple_choice',
+        description: 'A "Contronym" or "Janus word" is a word that can possess two contradictory meanings. Which of the following words means both "to adhere firmly" AND "to split or divide apart"?',
+        options: [
+          'Cleave',
+          'Buckle',
+          'Sanction',
+          'Fast'
+        ],
+        targetAnswer: 'Cleave',
+        hints: [
+          'In old English, two distinct verbs with similar sounds merged together: one from clifian (cling) and one from cleofan (split).',
+          'Think of a chef\'s heavy knife or a phrase like "cleave unto one another".'
+        ],
+        explanation: '"Cleave" is a famous contronym: it means to cling together tightly (e.g. cleave to hope) as well as to split into parts (cleave with a cleaver).'
+      },
+
+      // 9. ADVANCED - HYBRID (Triangular Cross-Sum Puzzle)
+      {
+        id: 'hyb-a-1',
+        title: 'Delta Logic Sum Triangle',
+        category: 'hybrid',
+        difficulty: 'advanced',
+        mode: 'interactive',
+        type: 'triangle_sum',
+        description: 'A triangle has three vertices and three midpoints along its edges. Place numbers from 1 to 6 into the slots so that the sum of each side equals 9.',
+        verticesPreset: { top: 1, left: 2, right: 3 },
+        side1: '1 + [Mid A] + 2 = 9',
+        side2: '2 + [Mid B] + 3 = 9',
+        side3: '3 + [Mid C] + 1 = 9',
+        targetAnswer: '6, 4, 5',
+        hints: [
+          'For Side 1: 1 + Mid A + 2 = 9 → Mid A = 9 - 3 = 6.',
+          'For Side 2: 2 + Mid B + 3 = 9 → Mid B = 9 - 5 = 4.',
+          'For Side 3: 3 + Mid C + 1 = 9 → Mid C = 9 - 4 = 5.'
+        ],
+        explanation: 'Mid A = 6, Mid B = 4, Mid C = 5. All numbers 1, 2, 3, 4, 5, 6 are used exactly once, and each side sums cleanly to 9!'
+      },
+
+      // 10. DAILY SPECIAL - MULTI-DISCIPLINARY SPEED QUIZ
+      {
+        id: 'daily-special-1',
+        title: 'The Enigma of Clock Angles',
+        category: 'hybrid',
+        difficulty: 'intermediate',
+        mode: 'quiz',
+        type: 'multiple_choice',
+        description: 'At 3:15 PM, what is the exact angle in degrees between the hour hand and the minute hand of a standard analogue clock?',
+        options: [
+          '0° (they overlap perfectly)',
+          '7.5°',
+          '12.5°',
+          '15°'
+        ],
+        targetAnswer: '7.5°',
+        hints: [
+          'Remember: The minute hand points directly at 3 (90°). But does the hour hand stay strictly at 3?',
+          'In 15 minutes, the hour hand advances by a quarter of an hour. Each hour on the clock is 30°.'
+        ],
+        explanation: 'Each hour marks 360° / 12 = 30°. In 15 minutes (1/4 of an hour), the hour hand moves 30° / 4 = 7.5° past the 3 o\'clock marker, while the minute hand is exactly on 3. Hence 7.5°!'
+      }
+    ];
+  </script>
+
+  <!-- Application Logic & Controllers -->
+  <script>
+    class MindForgeApp {
+      constructor() {
+        this.currentFilter = {
+          category: 'all',
+          difficulty: 'all',
+          mode: 'all'
+        };
+        this.currentPuzzle = null;
+        this.hintsRevealed = 0;
+        this.userProgress = this.loadProgress();
+
+        // Anagram builder state
+        this.anagramSelectedIndices = [];
+
+        // KenKen grid state
+        this.kenkenValues = {};
+      }
+
+      init() {
+        this.initTheme();
+        this.updateStatsDisplay();
+        this.renderCatalog();
+
+        // Listen for keyboard enter in arena input if present
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn && !submitBtn.classList.contains('hidden') && !submitBtn.disabled) {
+              const activeEl = document.activeElement;
+              if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+                this.checkAnswer();
+              }
+            }
+          }
+        });
+      }
+
+      // LocalStorage Progress Management
+      loadProgress() {
+        const defaultData = {
+          solved: {},
+          stars: 0,
+          streak: 1,
+          lastPlayedDate: new Date().toDateString(),
+          attempts: 0,
+          correctCount: 0
+        };
+        try {
+          const raw = localStorage.getItem('mindforge_progress_v1');
+          if (raw) {
+            const data = JSON.parse(raw);
+            // Check streak continuity
+            const today = new Date().toDateString();
+            if (data.lastPlayedDate !== today) {
+              const yesterday = new Date(Date.now() - 86400000).toDateString();
+              if (data.lastPlayedDate !== yesterday) {
+                data.streak = 1; // reset streak if gap > 1 day
+              } else {
+                data.streak = (data.streak || 0) + 1;
+              }
+              data.lastPlayedDate = today;
+            }
+            return data;
+          }
+        } catch (e) {
+          console.warn('LocalStorage unavailable', e);
+        }
+        return defaultData;
+      }
+
+      saveProgress() {
+        try {
+          localStorage.setItem('mindforge_progress_v1', JSON.stringify(this.userProgress));
+        } catch (e) {
+          console.warn('Unable to persist progress', e);
+        }
+        this.updateStatsDisplay();
+      }
+
+      updateStatsDisplay() {
+        document.getElementById('totalStars').textContent = this.userProgress.stars || 0;
+        document.getElementById('streakCount').textContent = this.userProgress.streak || 1;
+
+        const solvedCount = Object.keys(this.userProgress.solved || {}).length;
+        document.getElementById('heroSolvedCount').textContent = solvedCount;
+        document.getElementById('heroTotalCount').textContent = PUZZLE_DATA.length;
+
+        const attempts = this.userProgress.attempts || 0;
+        const correct = this.userProgress.correctCount || 0;
+        const accuracy = attempts > 0 ? Math.round((correct / attempts) * 100) : 100;
+        document.getElementById('heroAccuracy').textContent = `${accuracy}%`;
+      }
+
+      // Theme toggle (Dark / Light)
+      initTheme() {
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('mindforge_theme');
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('mindforge_theme', isDark ? 'dark' : 'light');
+        audioManager.playClick();
+      }
+
+      // Navigation & Filters
+      setFilter(type, val) {
+        audioManager.playClick();
+        if (type === 'category') {
+          this.currentFilter.category = val;
+          document.querySelectorAll('.cat-pill').forEach(btn => {
+            const active = btn.dataset.cat === val;
+            btn.className = `cat-pill px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
+              active 
+                ? 'bg-brand-600 text-white shadow-sm' 
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`;
+          });
+        } else if (type === 'diff') {
+          this.currentFilter.difficulty = val;
+          document.querySelectorAll('.diff-btn').forEach(btn => {
+            const active = btn.dataset.diff === val;
+            btn.className = `diff-btn text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-all ${
+              active ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'
+            }`;
+          });
+        } else if (type === 'mode') {
+          this.currentFilter.mode = val;
+        }
+        this.renderCatalog();
+      }
+
+      resetFilters() {
+        this.setFilter('category', 'all');
+        this.setFilter('diff', 'all');
+        document.getElementById('modeFilter').value = 'all';
+        this.setFilter('mode', 'all');
+      }
+
+      showCatalog() {
+        audioManager.playClick();
+        document.getElementById('arenaView').classList.add('hidden');
+        document.getElementById('catalogView').classList.remove('hidden');
+        this.renderCatalog();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      openDailyChallenge() {
+        const daily = PUZZLE_DATA.find(p => p.id === 'daily-special-1') || PUZZLE_DATA[0];
+        this.launchPuzzle(daily.id);
+      }
+
+      renderCatalog() {
+        const grid = document.getElementById('puzzleGrid');
+        const emptyState = document.getElementById('emptyCatalogState');
+        grid.innerHTML = '';
+
+        const filtered = PUZZLE_DATA.filter(p => {
+          if (this.currentFilter.category !== 'all' && p.category !== this.currentFilter.category) return false;
+          if (this.currentFilter.difficulty !== 'all' && p.difficulty !== this.currentFilter.difficulty) return false;
+          if (this.currentFilter.mode !== 'all' && p.mode !== this.currentFilter.mode) return false;
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          emptyState.classList.remove('hidden');
+          return;
+        }
+        emptyState.classList.add('hidden');
+
+        filtered.forEach(puzzle => {
+          const isSolved = !!this.userProgress.solved[puzzle.id];
+          const card = document.createElement('div');
+          card.className = `group relative rounded-3xl p-6 transition-all duration-300 border flex flex-col justify-between cursor-pointer ${
+            isSolved 
+              ? 'bg-white/70 dark:bg-slate-900/60 border-emerald-300/80 dark:border-emerald-900/60 shadow-sm' 
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1'
+          }`;
+
+          let catColor = 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300';
+          let catLabel = '📐 Math';
+          if (puzzle.category === 'language') {
+            catColor = 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300';
+            catLabel = '📖 Language';
+          } else if (puzzle.category === 'hybrid') {
+            catColor = 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300';
+            catLabel = '🧩 Hybrid';
+          }
+
+          let diffColor = 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800';
+          if (puzzle.difficulty === 'intermediate') {
+            diffColor = 'text-blue-500 bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800';
+          } else if (puzzle.difficulty === 'advanced') {
+            diffColor = 'text-purple-500 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800';
+          }
+
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-bold px-2.5 py-1 rounded-full ${catColor}">
+                    ${catLabel}
+                  </span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${diffColor}">
+                    ${puzzle.difficulty}
+                  </span>
+                </div>
+                ${isSolved ? `
+                  <div class="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-bold bg-emerald-50 dark:bg-emerald-950/50 px-2 py-1 rounded-full">
+                    <span>✓ Solved</span>
+                  </div>
+                ` : `
+                  <div class="text-xs text-slate-400 font-medium">
+                    ${puzzle.mode === 'interactive' ? 'Interactive 🕹️' : 'Speed Quiz ⚡'}
+                  </div>
+                `}
+              </div>
+
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-blue-400 transition-colors">
+                ${puzzle.title}
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                ${puzzle.description}
+              </p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold">
+              <span class="text-slate-400">${isSolved ? '3/3 Stars Earned ⭐' : 'Unsolved'}</span>
+              <span class="text-brand-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                Start Challenge →
+              </span>
+            </div>
+          `;
+
+          card.onclick = () => this.launchPuzzle(puzzle.id);
+          grid.appendChild(card);
+        });
+      }
+
+      // Launch Arena with Selected Puzzle
+      launchPuzzle(puzzleId) {
+        const puzzle = PUZZLE_DATA.find(p => p.id === puzzleId);
+        if (!puzzle) return;
+
+        audioManager.playClick();
+        this.currentPuzzle = puzzle;
+        this.hintsRevealed = 0;
+        this.anagramSelectedIndices = [];
+        this.kenkenValues = {};
+
+        // Switch Views
+        document.getElementById('catalogView').classList.add('hidden');
+        document.getElementById('arenaView').classList.remove('hidden');
+
+        // Populate Header info
+        document.getElementById('arenaTitle').textContent = puzzle.title;
+        document.getElementById('arenaDescription').textContent = puzzle.description;
+        document.getElementById('arenaTypeLabel').textContent = puzzle.type.replace('_', ' ').toUpperCase();
+
+        const diffBadge = document.getElementById('arenaDifficultyBadge');
+        diffBadge.textContent = puzzle.difficulty.toUpperCase();
+        diffBadge.className = `text-xs font-bold px-2.5 py-1 rounded-full ${
+          puzzle.difficulty === 'beginner' 
+            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' 
+            : puzzle.difficulty === 'intermediate'
+              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300'
+              : 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300'
+        }`;
+
+        const catBadge = document.getElementById('arenaCategoryBadge');
+        catBadge.textContent = puzzle.category.toUpperCase();
+
+        // Stars
+        const isSolved = !!this.userProgress.solved[puzzle.id];
+        document.getElementById('arenaStarIndicator').innerHTML = isSolved ? '⭐⭐⭐' : '☆☆☆';
+
+        // Reset Hint & Explanation Trays
+        document.getElementById('hintBox').classList.add('hidden');
+        document.getElementById('explanationBox').classList.add('hidden');
+        document.getElementById('hintCountBadge').textContent = `0/${puzzle.hints.length}`;
+        document.getElementById('submitBtn').classList.remove('hidden');
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('nextPuzzleBtn').classList.add('hidden');
+
+        // Render Specific Mechanic into Arena
+        this.renderInteractiveArea(puzzle);
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      renderInteractiveArea(puzzle) {
+        const container = document.getElementById('arenaInteractiveZone');
+        container.innerHTML = '';
+
+        switch (puzzle.type) {
+          case 'visual_algebra':
+            this.buildVisualAlgebra(container, puzzle);
+            break;
+          case 'anagram':
+            this.buildAnagramGame(container, puzzle);
+            break;
+          case 'rebus':
+            this.buildRebusGame(container, puzzle);
+            break;
+          case 'sequence_grid':
+            this.buildSequenceGrid(container, puzzle);
+            break;
+          case 'word_math':
+            this.buildWordMath(container, puzzle);
+            break;
+          case 'grid_kenken':
+            this.buildKenKen(container, puzzle);
+            break;
+          case 'triangle_sum':
+            this.buildTriangleSum(container, puzzle);
+            break;
+          case 'multiple_choice':
+            this.buildMultipleChoice(container, puzzle);
+            break;
+          default:
+            container.innerHTML = `<div class="text-sm">Standard challenge input ready.</div>`;
+        }
+      }
+
+      // MECHANIC 1: Visual Algebra Balance
+      buildVisualAlgebra(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-lg space-y-4';
+
+        const eqList = document.createElement('div');
+        eqList.className = 'space-y-3 bg-white dark:bg-slate-800/80 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm';
+        
+        puzzle.equations.forEach((eq, index) => {
+          const isFinal = index === puzzle.equations.length - 1;
+          const row = document.createElement('div');
+          row.className = `flex items-center justify-between text-base sm:text-xl font-bold py-2 border-b border-slate-100 dark:border-slate-700/60 last:border-0 ${
+            isFinal ? 'text-brand-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20 px-3 rounded-xl' : 'text-slate-800 dark:text-slate-200'
+          }`;
+          row.innerHTML = `
+            <div class="tracking-widest">${eq.replace(' = ?', '')}</div>
+            <div class="font-mono text-xl sm:text-2xl">${isFinal ? '= ?' : `= ${eq.split('=')[1].trim()}`}</div>
+          `;
+          eqList.appendChild(row);
+        });
+
+        // Numeric Input
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'flex flex-col sm:flex-row gap-3 items-center justify-center pt-2';
+        inputWrap.innerHTML = `
+          <label class="text-sm font-semibold text-slate-600 dark:text-slate-300">Target Value [ ? ] =</label>
+          <input type="number" id="algebraInput" placeholder="Enter number..." class="w-full sm:w-44 text-center px-4 py-3 text-lg font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none">
+        `;
+
+        wrap.appendChild(eqList);
+        wrap.appendChild(inputWrap);
+        container.appendChild(wrap);
+      }
+
+      // MECHANIC 2: Anagram Tile Arranger
+      buildAnagramGame(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-md flex flex-col items-center gap-6';
+
+        // Target Slot Boxes
+        const slotsContainer = document.createElement('div');
+        slotsContainer.id = 'anagramSlots';
+        slotsContainer.className = 'flex flex-wrap items-center justify-center gap-2 min-h-[58px]';
+
+        for (let i = 0; i < puzzle.scrambled.length; i++) {
+          const slot = document.createElement('div');
+          slot.className = 'tile-slot border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex items-center justify-center text-xl font-bold bg-white/50 dark:bg-slate-800/40 text-slate-800 dark:text-slate-100 shadow-sm';
+          slot.dataset.slotIndex = i;
+          slotsContainer.appendChild(slot);
+        }
+
+        // Available letter pool buttons
+        const poolContainer = document.createElement('div');
+        poolContainer.id = 'anagramPool';
+        poolContainer.className = 'flex flex-wrap items-center justify-center gap-2 p-4 bg-slate-100 dark:bg-slate-800/60 rounded-2xl w-full border border-slate-200 dark:border-slate-700';
+
+        puzzle.scrambled.forEach((letter, idx) => {
+          const tile = document.createElement('button');
+          tile.className = 'tile-btn w-12 h-13 rounded-xl bg-white dark:bg-slate-700 text-slate-800 dark:text-white font-extrabold text-xl shadow-md border border-slate-200 dark:border-slate-600 hover:border-brand-500 hover:text-brand-600 dark:hover:text-blue-400';
+          tile.textContent = letter;
+          tile.dataset.letterIndex = idx;
+          tile.onclick = () => this.handleAnagramTileClick(idx, letter);
+          poolContainer.appendChild(tile);
+        });
+
+        // Clear word button
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 underline';
+        clearBtn.textContent = 'Clear Letter Arrangement';
+        clearBtn.onclick = () => this.resetAnagramSlots();
+
+        wrap.appendChild(slotsContainer);
+        wrap.appendChild(poolContainer);
+        wrap.appendChild(clearBtn);
+        container.appendChild(wrap);
+      }
+
+      handleAnagramTileClick(letterIdx, letter) {
+        audioManager.playTileSelect();
+        // Check if already placed
+        const existingPos = this.anagramSelectedIndices.indexOf(letterIdx);
+        if (existingPos !== -1) {
+          // Remove it
+          this.anagramSelectedIndices.splice(existingPos, 1);
+        } else {
+          // Add if space exists
+          if (this.anagramSelectedIndices.length < this.currentPuzzle.scrambled.length) {
+            this.anagramSelectedIndices.push(letterIdx);
+          }
+        }
+        this.updateAnagramUI();
+      }
+
+      resetAnagramSlots() {
+        audioManager.playClick();
+        this.anagramSelectedIndices = [];
+        this.updateAnagramUI();
+      }
+
+      updateAnagramUI() {
+        const slots = document.querySelectorAll('#anagramSlots .tile-slot');
+        slots.forEach((slot, i) => {
+          if (i < this.anagramSelectedIndices.length) {
+            const letterIdx = this.anagramSelectedIndices[i];
+            slot.textContent = this.currentPuzzle.scrambled[letterIdx];
+            slot.className = 'tile-slot border-2 border-brand-500 bg-brand-50 dark:bg-blue-950/60 text-brand-700 dark:text-blue-300 font-extrabold text-2xl rounded-xl flex items-center justify-center shadow-md animate-pulse-subtle';
+          } else {
+            slot.textContent = '';
+            slot.className = 'tile-slot border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl flex items-center justify-center text-xl font-bold bg-white/50 dark:bg-slate-800/40 text-slate-800 dark:text-slate-100 shadow-sm';
+          }
+        });
+
+        // Update letter pool buttons visual state
+        const buttons = document.querySelectorAll('#anagramPool button');
+        buttons.forEach(btn => {
+          const idx = parseInt(btn.dataset.letterIndex, 10);
+          if (this.anagramSelectedIndices.includes(idx)) {
+            btn.classList.add('opacity-25', 'pointer-events-none', 'scale-90');
+          } else {
+            btn.classList.remove('opacity-25', 'pointer-events-none', 'scale-90');
+          }
+        });
+      }
+
+      // MECHANIC 3: Rebus Pictogram Puzzle
+      buildRebusGame(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-md flex flex-col items-center gap-5';
+
+        const displayBox = document.createElement('div');
+        displayBox.className = 'w-full shadow-md rounded-2xl overflow-hidden';
+        displayBox.innerHTML = puzzle.visualDisplay;
+
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'w-full flex flex-col gap-2';
+        inputGroup.innerHTML = `
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center">Your Interpretation</label>
+          <input type="text" id="rebusInput" placeholder="Type solution..." autocomplete="off" class="w-full text-center px-4 py-3 text-lg font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white uppercase tracking-wider focus:ring-2 focus:ring-brand-500 outline-none">
+        `;
+
+        wrap.appendChild(displayBox);
+        wrap.appendChild(inputGroup);
+        container.appendChild(wrap);
+      }
+
+      // MECHANIC 4: Sequence Matrix Grid
+      buildSequenceGrid(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'flex flex-col items-center gap-6 w-full max-w-sm';
+
+        const table = document.createElement('div');
+        table.className = 'grid grid-cols-3 gap-2 p-3 bg-slate-200 dark:bg-slate-800 rounded-2xl shadow-inner';
+
+        puzzle.matrix.forEach(row => {
+          row.forEach(val => {
+            const cell = document.createElement('div');
+            const isTarget = val === '?';
+            cell.className = `w-16 h-16 sm:w-20 sm:h-20 rounded-xl flex items-center justify-center font-extrabold text-lg sm:text-2xl ${
+              isTarget 
+                ? 'bg-amber-400 text-slate-900 shadow-lg animate-pulse-subtle' 
+                : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm'
+            }`;
+            cell.textContent = val;
+            table.appendChild(cell);
+          });
+        });
+
+        const inputArea = document.createElement('div');
+        inputArea.className = 'flex items-center gap-2';
+        inputArea.innerHTML = `
+          <span class="font-bold text-sm text-slate-600 dark:text-slate-300">Answer:</span>
+          <input type="number" id="sequenceInput" placeholder="Value for ?" class="w-28 text-center px-3 py-2 text-lg font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none">
+        `;
+
+        wrap.appendChild(table);
+        wrap.appendChild(inputArea);
+        container.appendChild(wrap);
+      }
+
+      // MECHANIC 5: Word-Math Weight
+      buildWordMath(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-md flex flex-col items-center gap-6';
+
+        const wordDisplay = document.createElement('div');
+        wordDisplay.className = 'flex items-center justify-center gap-2';
+
+        puzzle.word.split('').forEach(char => {
+          const charBox = document.createElement('div');
+          charBox.className = 'w-12 h-14 rounded-xl bg-gradient-to-b from-brand-500 to-indigo-600 text-white font-extrabold text-2xl flex items-center justify-center shadow-lg';
+          charBox.textContent = char;
+          wordDisplay.appendChild(charBox);
+        });
+
+        const guide = document.createElement('div');
+        guide.className = 'text-xs text-center text-slate-500 dark:text-slate-400 font-medium px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl';
+        guide.textContent = 'Alphabet Index: A=1, B=2, C=3, ... Z=26';
+
+        const inputRow = document.createElement('div');
+        inputRow.className = 'flex items-center gap-3';
+        inputRow.innerHTML = `
+          <label class="text-sm font-bold text-slate-600 dark:text-slate-300">Total Word Value =</label>
+          <input type="number" id="wordMathInput" placeholder="Sum" class="w-32 text-center px-4 py-2.5 text-lg font-bold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500 outline-none">
+        `;
+
+        wrap.appendChild(wordDisplay);
+        wrap.appendChild(guide);
+        wrap.appendChild(inputRow);
+        container.appendChild(wrap);
+      }
+
+      // MECHANIC 6: KenKen Mini Grid
+      buildKenKen(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'flex flex-col items-center gap-4';
+
+        const instructions = document.createElement('div');
+        instructions.className = 'text-xs font-semibold text-slate-500 dark:text-slate-400 text-center max-w-sm';
+        instructions.textContent = 'Each row and column must contain digits 1, 2, and 3 without duplicates. Tap cells to cycle 1 → 2 → 3.';
+
+        const grid = document.createElement('div');
+        grid.className = 'grid grid-cols-3 gap-2 p-3 bg-slate-200 dark:bg-slate-800 rounded-2xl shadow-inner';
+
+        puzzle.preset.forEach((row, r) => {
+          row.forEach((fixedVal, c) => {
+            const cell = document.createElement('div');
+            const key = `${r}-${c}`;
+            if (fixedVal !== null) {
+              cell.className = 'w-16 h-16 rounded-xl bg-slate-300 dark:bg-slate-700 font-extrabold text-2xl flex items-center justify-center text-slate-700 dark:text-slate-300 shadow-sm cursor-not-allowed';
+              cell.textContent = fixedVal;
+              this.kenkenValues[key] = fixedVal;
+            } else {
+              this.kenkenValues[key] = 1;
+              cell.className = 'w-16 h-16 rounded-xl bg-white dark:bg-slate-900 font-extrabold text-2xl flex items-center justify-center text-brand-600 dark:text-blue-400 border-2 border-brand-500 cursor-pointer active:scale-95 transition';
+              cell.textContent = 1;
+              cell.onclick = () => {
+                audioManager.playClick();
+                let cur = this.kenkenValues[key];
+                cur = cur >= 3 ? 1 : cur + 1;
+                this.kenkenValues[key] = cur;
+                cell.textContent = cur;
+              };
+            }
+            grid.appendChild(cell);
+          });
+        });
+
+        wrap.appendChild(instructions);
+        wrap.appendChild(grid);
+        container.appendChild(wrap);
+      }
+
+      // MECHANIC 7: Delta Triangle Sum
+      buildTriangleSum(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-sm flex flex-col items-center gap-4';
+
+        const sidesBox = document.createElement('div');
+        sidesBox.className = 'w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl space-y-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300';
+        sidesBox.innerHTML = `
+          <div>Side 1: ${puzzle.side1}</div>
+          <div>Side 2: ${puzzle.side2}</div>
+          <div>Side 3: ${puzzle.side3}</div>
+        `;
+
+        const inputsContainer = document.createElement('div');
+        inputsContainer.className = 'grid grid-cols-3 gap-3 w-full';
+        inputsContainer.innerHTML = `
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs font-bold text-slate-500">Mid A</span>
+            <input type="number" id="triA" class="w-full text-center py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold" min="1" max="6">
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs font-bold text-slate-500">Mid B</span>
+            <input type="number" id="triB" class="w-full text-center py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold" min="1" max="6">
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs font-bold text-slate-500">Mid C</span>
+            <input type="number" id="triC" class="w-full text-center py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-bold" min="1" max="6">
+          </div>
+        `;
+
+        wrap.appendChild(sidesBox);
+        wrap.appendChild(inputsContainer);
+        container.appendChild(wrap);
+      }
+
+      // MECHANIC 8: Multiple Choice / Speed Quiz
+      buildMultipleChoice(container, puzzle) {
+        const wrap = document.createElement('div');
+        wrap.className = 'w-full max-w-lg flex flex-col gap-3';
+        this.selectedChoice = null;
+
+        puzzle.options.forEach((opt) => {
+          const btn = document.createElement('button');
+          btn.className = 'choice-btn w-full p-4 text-left rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-semibold text-slate-800 dark:text-slate-100 hover:border-brand-500 transition-all flex items-center justify-between';
+          btn.innerHTML = `
+            <span>${opt}</span>
+            <span class="w-5 h-5 rounded-full border border-slate-400 flex items-center justify-center text-xs text-transparent">✓</span>
+          `;
+          btn.onclick = () => {
+            audioManager.playTileSelect();
+            this.selectedChoice = opt;
+            document.querySelectorAll('.choice-btn').forEach(b => {
+              b.classList.remove('border-brand-500', 'bg-brand-50', 'dark:bg-blue-950/40', 'text-brand-700', 'dark:text-blue-300');
+              b.querySelector('span:last-child').classList.add('text-transparent');
+              b.querySelector('span:last-child').classList.remove('bg-brand-600', 'text-white');
+            });
+            btn.classList.add('border-brand-500', 'bg-brand-50', 'dark:bg-blue-950/40', 'text-brand-700', 'dark:text-blue-300');
+            btn.querySelector('span:last-child').classList.remove('text-transparent');
+            btn.querySelector('span:last-child').classList.add('bg-brand-600', 'text-white');
+          };
+          wrap.appendChild(btn);
+        });
+
+        container.appendChild(wrap);
+      }
+
+      // Submission & Answer Verification
+      checkAnswer() {
+        const puzzle = this.currentPuzzle;
+        if (!puzzle) return;
+
+        let isCorrect = false;
+        this.userProgress.attempts = (this.userProgress.attempts || 0) + 1;
+
+        switch (puzzle.type) {
+          case 'visual_algebra': {
+            const input = document.getElementById('algebraInput');
+            const val = parseInt(input ? input.value.trim() : '0', 10);
+            if (val === puzzle.targetAnswer) isCorrect = true;
+            break;
+          }
+          case 'anagram': {
+            const formedWord = this.anagramSelectedIndices.map(i => puzzle.scrambled[i]).join('');
+            if (formedWord.toUpperCase() === puzzle.targetWord.toUpperCase()) isCorrect = true;
+            break;
+          }
+          case 'rebus': {
+            const input = document.getElementById('rebusInput');
+            const val = input ? input.value.trim().toUpperCase() : '';
+            if (val === puzzle.targetAnswer.toUpperCase() || (puzzle.targetAlternatives && puzzle.targetAlternatives.includes(val))) {
+              isCorrect = true;
+            }
+            break;
+          }
+          case 'sequence_grid': {
+            const input = document.getElementById('sequenceInput');
+            const val = parseInt(input ? input.value.trim() : '0', 10);
+            if (val === puzzle.targetAnswer) isCorrect = true;
+            break;
+          }
+          case 'word_math': {
+            const input = document.getElementById('wordMathInput');
+            const val = parseInt(input ? input.value.trim() : '0', 10);
+            if (val === puzzle.targetAnswer) isCorrect = true;
+            break;
+          }
+          case 'grid_kenken': {
+            let match = true;
+            for (let r = 0; r < 3; r++) {
+              for (let c = 0; c < 3; c++) {
+                if (this.kenkenValues[`${r}-${c}`] !== puzzle.targetGrid[r][c]) {
+                  match = false;
+                }
+              }
+            }
+            if (match) isCorrect = true;
+            break;
+          }
+          case 'triangle_sum': {
+            const a = parseInt(document.getElementById('triA').value, 10);
+            const b = parseInt(document.getElementById('triB').value, 10);
+            const c = parseInt(document.getElementById('triC').value, 10);
+            if (a === 6 && b === 4 && c === 5) isCorrect = true;
+            break;
+          }
+          case 'multiple_choice': {
+            if (this.selectedChoice === puzzle.targetAnswer) isCorrect = true;
+            break;
+          }
+        }
+
+        if (isCorrect) {
+          this.handleSuccess(puzzle);
+        } else {
+          this.handleFailure();
+        }
+      }
+
+      handleSuccess(puzzle) {
+        audioManager.playCorrect();
+
+        // Confetti burst
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+
+        this.userProgress.correctCount = (this.userProgress.correctCount || 0) + 1;
+        const alreadySolved = !!this.userProgress.solved[puzzle.id];
+
+        if (!alreadySolved) {
+          const starsEarned = Math.max(1, 3 - this.hintsRevealed);
+          this.userProgress.solved[puzzle.id] = { stars: starsEarned, date: new Date().toISOString() };
+          this.userProgress.stars = (this.userProgress.stars || 0) + starsEarned;
+          this.saveProgress();
+          this.showToast(`Splendid! Puzzle Solved (+${starsEarned} Stars) ⭐`, 'success');
+        } else {
+          this.showToast('Spot on! Correct answer once again.', 'success');
+        }
+
+        document.getElementById('arenaStarIndicator').innerHTML = '⭐⭐⭐';
+        
+        // Show explanation
+        const explBox = document.getElementById('explanationBox');
+        document.getElementById('explanationText').textContent = puzzle.explanation;
+        explBox.classList.remove('hidden');
+
+        // Swap action buttons
+        document.getElementById('submitBtn').classList.add('hidden');
+        document.getElementById('nextPuzzleBtn').classList.remove('hidden');
+      }
+
+      handleFailure() {
+        audioManager.playWrong();
+        const arenaZone = document.getElementById('arenaInteractiveZone');
+        arenaZone.classList.add('animate-shake');
+        setTimeout(() => arenaZone.classList.remove('animate-shake'), 450);
+        this.showToast('Not quite right. Review the clues or tap for a Hint!', 'error');
+      }
+
+      requestHint() {
+        audioManager.playHint();
+        const puzzle = this.currentPuzzle;
+        if (!puzzle || !puzzle.hints || puzzle.hints.length === 0) return;
+
+        if (this.hintsRevealed < puzzle.hints.length) {
+          this.hintsRevealed++;
+          const hintBox = document.getElementById('hintBox');
+          hintBox.classList.remove('hidden');
+          
+          const hintsHtml = puzzle.hints
+            .slice(0, this.hintsRevealed)
+            .map((h, idx) => `<p class="mt-1"><strong>Step ${idx + 1}:</strong> ${h}</p>`)
+            .join('');
+
+          document.getElementById('hintText').innerHTML = hintsHtml;
+          document.getElementById('hintCountBadge').textContent = `${this.hintsRevealed}/${puzzle.hints.length}`;
+          this.showToast(`Hint ${this.hintsRevealed} unlocked`, 'info');
+        } else {
+          this.showToast('All available hints for this puzzle have been revealed!', 'info');
+        }
+      }
+
+      resetCurrentPuzzle() {
+        if (!this.currentPuzzle) return;
+        audioManager.playClick();
+        this.hintsRevealed = 0;
+        this.anagramSelectedIndices = [];
+        this.kenkenValues = {};
+        document.getElementById('hintBox').classList.add('hidden');
+        document.getElementById('explanationBox').classList.add('hidden');
+        document.getElementById('submitBtn').classList.remove('hidden');
+        document.getElementById('nextPuzzleBtn').classList.add('hidden');
+        this.renderInteractiveArea(this.currentPuzzle);
+        this.showToast('Puzzle reset', 'info');
+      }
+
+      nextPuzzle() {
+        const curIndex = PUZZLE_DATA.findIndex(p => p.id === this.currentPuzzle.id);
+        const nextIndex = (curIndex + 1) % PUZZLE_DATA.length;
+        this.launchPuzzle(PUZZLE_DATA[nextIndex].id);
+      }
+
+      showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        let bgStyle = 'bg-slate-900 text-white border-slate-700';
+        if (type === 'success') {
+          bgStyle = 'bg-emerald-600 text-white border-emerald-500';
+        } else if (type === 'error') {
+          bgStyle = 'bg-rose-600 text-white border-rose-500';
+        }
+        toast.className = `fixed bottom-6 right-6 z-50 transform transition-all duration-300 px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold border ${bgStyle} translate-y-0 opacity-100`;
+        toast.textContent = message;
+
+        clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => {
+          toast.className = 'fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-semibold border';
+        }, 3200);
+      }
+    }
+
+    // Launch Application
+    const app = new MindForgeApp();
+    window.addEventListener('DOMContentLoaded', () => {
+      app.init();
+    });
+  </script>
+</body>
+</html>
