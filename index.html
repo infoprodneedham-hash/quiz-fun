@@ -647,6 +647,476 @@
         ],
         explanation: 'Each hour marks 360° / 12 = 30°. In 15 minutes (1/4 of an hour), the hour hand moves 30° / 4 = 7.5° past the 3 o\'clock marker, while the minute hand is exactly on 3. Hence 7.5°!'
       }
+      // --- PASTE INTO PUZZLE_DATA ARRAY ---
+
+// 1. BEGINNER - MATH (Multiple Choice / Speed Quiz)
+{
+  id: 'math-b-2',
+  title: 'The Doubling Lily Pad',
+  category: 'math',
+  difficulty: 'beginner',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'A patch of lily pads in a pond doubles in area every single day. If it takes 48 days to cover the entire pond, on which day does it cover exactly half of the pond?',
+  options: [
+    'Day 24',
+    'Day 36',
+    'Day 47',
+    'Day 40'
+  ],
+  targetAnswer: 'Day 47',
+  hints: [
+    'Think backwards from Day 48.',
+    'If the patch doubles every single day, what was its size just one day prior to filling the entire pond?'
+  ],
+  explanation: 'Since the patch doubles every day, on Day 47 it is at exactly half capacity. Doubling on Day 48 fills the entire pond.'
+},
+
+// 2. BEGINNER - LANGUAGE (Anagram)
+{
+  id: 'lang-b-2',
+  title: 'Silver Nocturne',
+  category: 'language',
+  difficulty: 'beginner',
+  mode: 'interactive',
+  type: 'anagram',
+  description: 'Rearrange the letter tiles to uncover the natural satellite that orbits our Earth.',
+  scrambled: ['O', 'M', 'N', 'O'],
+  targetWord: 'MOON',
+  clue: 'Orbits the Earth and causes oceanic tides.',
+  hints: [
+    'Contains a double vowel "OO".',
+    'Starts with M and ends with N.'
+  ],
+  explanation: 'M-O-O-N spells "MOON", the celestial body that controls our lunar cycles.'
+},
+
+// 3. BEGINNER - HYBRID (Visual Rebus)
+{
+  id: 'hyb-b-2',
+  title: 'Temporal Pictogram',
+  category: 'hybrid',
+  difficulty: 'beginner',
+  mode: 'interactive',
+  type: 'rebus',
+  description: 'Interpret this positional rebus puzzle to reveal a common everyday prepositional phrase.',
+  visualDisplay: `
+    <div class="flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 select-none">
+      <div class="text-xs uppercase font-bold text-slate-500 mb-2">Visual Clue</div>
+      <div class="text-3xl sm:text-4xl font-extrabold tracking-widest text-slate-800 dark:text-slate-100 font-mono py-2">
+        TIMING
+      </div>
+      <div class="w-36 h-1 bg-slate-400 dark:bg-slate-600 my-1 rounded-full"></div>
+      <div class="text-3xl sm:text-4xl font-extrabold tracking-widest text-blue-600 dark:text-blue-400 font-mono py-2">
+        TIMING
+      </div>
+    </div>
+  `,
+  targetAnswer: 'SPLIT TIMING',
+  targetAlternatives: ['TIMING AFTER TIMING', 'SPLIT-TIMING'],
+  hints: [
+    'Notice how the identical word TIMING is split into two across the dividing bar.',
+    'Think of theatrical precision or a fraction of a second: "Split ______".'
+  ],
+  explanation: 'The word "TIMING" is literally split in two across the horizontal bar, giving the idiom "SPLIT TIMING".'
+},
+
+// 4. BEGINNER - MATH (Visual Algebra Balance)
+{
+  id: 'math-b-3',
+  title: 'Bakery Treat Arithmetic',
+  category: 'math',
+  difficulty: 'beginner',
+  mode: 'interactive',
+  type: 'visual_algebra',
+  description: 'Deduce the numeric price of each bakery pastry, then solve for the customer\'s order total.',
+  items: [
+    { icon: '🥐', name: 'Croissant', val: 4 },
+    { icon: '☕', name: 'Coffee', val: 6 },
+    { icon: '🍩', name: 'Donut', val: 2 }
+  ],
+  equations: [
+    '🥐 + 🥐 + 🥐 = 12',
+    '🥐 + ☕ = 10',
+    '☕ - 🍩 = 4',
+    '🥐 + ☕ + 🍩 = ?'
+  ],
+  targetAnswer: 12,
+  inputHint: 'Enter final sum',
+  hints: [
+    'If 3 Croissants equal 12, each Croissant is 12 ÷ 3 = 4.',
+    'Substitute Croissant (4) into equation 2: 4 + Coffee = 10, so Coffee = 6. Then 6 - Donut = 4, so Donut = 2.'
+  ],
+  explanation: 'Croissant = 4, Coffee = 6, Donut = 2. Total: 4 + 6 + 2 = 12.'
+},
+
+// 5. BEGINNER - LANGUAGE (Speed Quiz)
+{
+  id: 'lang-b-3',
+  title: 'Collective Fauna Terminology',
+  category: 'language',
+  difficulty: 'beginner',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'What is the correct traditional collective noun used to describe a gathering of ravens?',
+  options: [
+    'A Parliament',
+    'An Unkindness',
+    'A Murder',
+    'A Conspiracy'
+  ],
+  targetAnswer: 'An Unkindness',
+  hints: [
+    'A "Murder" is for crows, not ravens.',
+    'This term dates back to 15th-century folklore reflecting the harsh, eerie croak of the bird.'
+  ],
+  explanation: 'While crows form a "murder", ravens are collectively termed an "unkindness" (or a "treachery"). Owls gather in a "parliament".'
+},
+
+// 6. INTERMEDIATE - MATH (Sequence Grid)
+{
+  id: 'math-i-2',
+  title: 'Hexagonal Factor Matrix',
+  category: 'math',
+  difficulty: 'intermediate',
+  mode: 'interactive',
+  type: 'sequence_grid',
+  description: 'Analyze the mathematical relationship across each row to find the missing terminal value [ ? ].',
+  matrix: [
+    [3, 5, 30],
+    [4, 6, 48],
+    [5, 7, '?']
+  ],
+  ruleNote: 'Examine: Row 1 has (3, 5) -> 30. Row 2 has (4, 6) -> 48.',
+  targetAnswer: 70,
+  hints: [
+    'Multiply the two input numbers first: 3 × 5 = 15. How does 15 become 30?',
+    'Double the product: 2 × (a × b). For the final row, calculate 2 × (5 × 7).'
+  ],
+  explanation: 'The pattern is (Col 1 × Col 2) × 2 = Col 3. For the third row: (5 × 7) × 2 = 35 × 2 = 70.'
+},
+
+// 7. INTERMEDIATE - LANGUAGE (Anagram)
+{
+  id: 'lang-i-2',
+  title: 'The Silent Thinker',
+  category: 'language',
+  difficulty: 'intermediate',
+  mode: 'interactive',
+  type: 'anagram',
+  description: 'Unscramble the letters to reveal a word meaning: "Free from disturbance; tranquil and serene".',
+  scrambled: ['P', 'A', 'C', 'I', 'F', 'C', 'I'],
+  targetWord: 'PACIFIC',
+  clue: 'Also the name of our planet\'s largest, most peaceful ocean.',
+  hints: [
+    'Starts with P and contains two C\'s.',
+    'Shares its Latin root with "pacify" and "pax" (peace).'
+  ],
+  explanation: 'P-A-C-I-F-I-C means peaceful or tranquil. Ferdinand Magellan named the Pacific Ocean for its calm waters.'
+},
+
+// 8. INTERMEDIATE - HYBRID (Word Math)
+{
+  id: 'hyb-i-2',
+  title: 'Cosmic Letter Summation',
+  category: 'hybrid',
+  difficulty: 'intermediate',
+  mode: 'interactive',
+  type: 'word_math',
+  description: 'Assign each letter its alphabetical rank (A=1 ... Z=26) and compute the sum of the word "SOLAR".',
+  word: 'SOLAR',
+  equationBreakdown: 'S(19) + O(15) + L(12) + A(1) + R(18)',
+  targetAnswer: 65,
+  hints: [
+    'Values: S=19, O=15, L=12, A=1, R=18.',
+    'Sum them up: 19 + 15 = 34; 34 + 12 = 46; 46 + 1 = 47; 47 + 18 = ?'
+  ],
+  explanation: '19 (S) + 15 (O) + 12 (L) + 1 (A) + 18 (R) = 65.'
+},
+
+// 9. INTERMEDIATE - MATH (Speed Quiz)
+{
+  id: 'math-i-3',
+  title: 'The Handshake Paradox',
+  category: 'math',
+  difficulty: 'intermediate',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'In a room of 10 mathematicians, everyone shakes hands with every other person exactly once. How many total handshakes occur?',
+  options: [
+    '90',
+    '45',
+    '50',
+    '100'
+  ],
+  targetAnswer: '45',
+  hints: [
+    'Person 1 shakes with 9 others, Person 2 shakes with 8 remaining, and so forth.',
+    'Use the combination formula: n × (n - 1) / 2.'
+  ],
+  explanation: 'Total handshakes = (10 × 9) / 2 = 90 / 2 = 45. Each handshake involves two people, so 90 handshake acts equals 45 unique handshakes.'
+},
+
+// 10. INTERMEDIATE - HYBRID (Visual Rebus)
+{
+  id: 'hyb-i-3',
+  title: 'Cryptic Directional Phrase',
+  category: 'hybrid',
+  difficulty: 'intermediate',
+  mode: 'interactive',
+  type: 'rebus',
+  description: 'Examine the layout and letter sizes to deduce the classic 4-word idiom.',
+  visualDisplay: `
+    <div class="flex items-center justify-center gap-3 p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 select-none">
+      <div class="text-xs uppercase font-bold text-slate-500 mr-2">Visual Clue:</div>
+      <span class="text-3xl font-extrabold text-blue-600 dark:text-blue-400 font-mono">ONCE</span>
+      <div class="w-14 h-14 rounded-full bg-blue-500/20 border-2 border-blue-500 flex items-center justify-center text-2xl shadow-inner">
+        🌕
+      </div>
+    </div>
+  `,
+  targetAnswer: 'ONCE IN A BLUE MOON',
+  targetAlternatives: ['ONCE IN A BLUE MOON', 'A BLUE MOON'],
+  hints: [
+    'The word ONCE is paired with a moon tinted blue.',
+    'Refers to an event that happens extremely rarely.'
+  ],
+  explanation: 'The layout depicts "ONCE" inside or alongside a blue moon: "ONCE IN A BLUE MOON".'
+},
+
+// 11. INTERMEDIATE - LANGUAGE (Speed Quiz)
+{
+  id: 'lang-i-3',
+  title: 'Curious Etymology',
+  category: 'language',
+  difficulty: 'intermediate',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'Which word for a trick, puzzle, or hoax originally stemmed from a satirical 18th-century phrase describing quick sleight of hand?',
+  options: [
+    'Bamboozle',
+    'Chicanery',
+    'Hocus Pocus',
+    'Shenanigan'
+  ],
+  targetAnswer: 'Hocus Pocus',
+  hints: [
+    'Often chanted by stage magicians pulling a rabbit from a top hat.',
+    'A faux-Latin doggerel coined by jugglers in the 1600s.'
+  ],
+  explanation: '"Hocus Pocus" originated in the early 1600s as a mock-Latin pseudo-incantation by street performers and jugglers.'
+},
+
+// 12. ADVANCED - MATH (Speed Quiz)
+{
+  id: 'math-a-2',
+  title: 'The Monty Hall Decision',
+  category: 'math',
+  difficulty: 'advanced',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'You pick Door 1 of 3 (one holds a sports car; two hold goats). The host opens Door 3 revealing a goat and offers to let you switch to Door 2. What are your winning odds if you switch?',
+  options: [
+    '1/2 (50%)',
+    '2/3 (66.7%)',
+    '1/3 (33.3%)',
+    '3/4 (75%)'
+  ],
+  targetAnswer: '2/3 (66.7%)',
+  hints: [
+    'Your original door had a 1/3 chance of having the car.',
+    'The remaining 2/3 probability belonged to Doors 2 & 3 combined. Since Door 3 is eliminated, all 2/3 shifts to Door 2.'
+  ],
+  explanation: 'Switching yields a 2/3 win rate. Your initial pick only has a 1/3 chance of being right, meaning 2/3 of the time the host must reveal the sole remaining goat, leaving the prize behind the other unopened door.'
+},
+
+// 13. ADVANCED - LANGUAGE (Anagram)
+{
+  id: 'lang-a-2',
+  title: 'Architect of Language',
+  category: 'language',
+  difficulty: 'advanced',
+  mode: 'interactive',
+  type: 'anagram',
+  description: 'Arrange these letters to form an adjective meaning: "Having a pleasant, sweet, or harmonious musical sound".',
+  scrambled: ['M', 'E', 'L', 'L', 'I', 'F', 'L', 'U', 'O', 'U', 'S'],
+  targetWord: 'MELLIFLUOUS',
+  clue: 'Originates from the Latin root for "honey flowing".',
+  hints: [
+    'Starts with M and ends with the suffix -OUS.',
+    'Contains three L\'s: M-E-L-L-I-F-L...'
+  ],
+  explanation: 'M-E-L-L-I-F-L-U-O-U-S comes from the Latin "mel" (honey) and "fluere" (to flow), meaning sweet-sounding.'
+},
+
+// 14. ADVANCED - HYBRID (Sequence Grid)
+{
+  id: 'hyb-a-2',
+  title: 'Fibonacci Cross-Sum Matrix',
+  category: 'hybrid',
+  difficulty: 'advanced',
+  mode: 'interactive',
+  type: 'sequence_grid',
+  description: 'Inspect the non-linear relationship between adjacent columns to determine the hidden value [ ? ].',
+  matrix: [
+    [1, 2, 9],
+    [2, 3, 35],
+    [3, 4, '?']
+  ],
+  ruleNote: 'Row 1: (1, 2) -> 9. Row 2: (2, 3) -> 35.',
+  targetAnswer: 91,
+  hints: [
+    'Try cubic powers: What is 1³ + 2³? 1 + 8 = 9.',
+    'Test row 2: 2³ + 3³ = 8 + 27 = 35. Now apply: 3³ + 4³.'
+  ],
+  explanation: 'The rule is a³ + b³ = c. For row 3: 3³ + 4³ = 27 + 64 = 91.'
+},
+
+// 15. ADVANCED - MATH (Visual Algebra Balance)
+{
+  id: 'math-a-3',
+  title: 'Orbital Resonance Equations',
+  category: 'math',
+  difficulty: 'advanced',
+  mode: 'interactive',
+  type: 'visual_algebra',
+  description: 'Solve the system of non-linear planetary weight symbols to find the final mystery sum.',
+  items: [
+    { icon: '🪐', name: 'Saturn', val: 7 },
+    { icon: '🚀', name: 'Rocket', val: 12 },
+    { icon: '⭐', name: 'Star', val: 9 }
+  ],
+  equations: [
+    '🪐 + 🪐 + 🪐 = 21',
+    '🚀 - 🪐 = 5',
+    '🚀 + ⭐ = 21',
+    '🪐 + 🚀 + ⭐ = ?'
+  ],
+  targetAnswer: 28,
+  inputHint: 'Enter final sum',
+  hints: [
+    'Saturn: 21 ÷ 3 = 7.',
+    'Rocket: Rocket - 7 = 5 → Rocket = 12. Star: 12 + Star = 21 → Star = 9.'
+  ],
+  explanation: 'Saturn = 7, Rocket = 12, Star = 9. Total: 7 + 12 + 9 = 28.'
+},
+
+// 16. ADVANCED - LANGUAGE (Speed Quiz)
+{
+  id: 'lang-a-3',
+  title: 'Orthographic Oddities',
+  category: 'language',
+  difficulty: 'advanced',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'A "pangram" is a sentence using every letter of the alphabet. What is the name for a word that contains all five vowels (A, E, I, O, U) in exact alphabetical order?',
+  options: [
+    'Facetious',
+    'Sequioa',
+    'Supercalifragilistic',
+    'Euphonious'
+  ],
+  targetAnswer: 'Facetious',
+  hints: [
+    'Means treating serious issues with deliberately inappropriate humor.',
+    'Check the vowels: F-A-c-E-t-I-O-u-S (and even "y" if facetiously!).'
+  ],
+  explanation: '"Facetious" contains A, E, I, O, and U in strict ascending alphabetical order. (Add -ly and it even includes Y!)'
+},
+
+// 17. ADVANCED - HYBRID (Visual Rebus)
+{
+  id: 'hyb-a-3',
+  title: 'Cryptic Architectural Cipher',
+  category: 'hybrid',
+  difficulty: 'advanced',
+  mode: 'interactive',
+  type: 'rebus',
+  description: 'Analyze the typographic positioning and spatial layout to deduce the common English idiom.',
+  visualDisplay: `
+    <div class="flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 select-none">
+      <div class="text-xs uppercase font-bold text-slate-500 mb-2">Visual Clue</div>
+      <div class="text-4xl font-extrabold tracking-widest text-slate-800 dark:text-slate-100 font-mono py-2">
+        RO<span class="text-emerald-500 font-black">AD</span>S
+      </div>
+      <div class="text-xs uppercase tracking-widest text-slate-400 mt-2">
+        [ AD is enclosed right inside of ROS ]
+      </div>
+    </div>
+  `,
+  targetAnswer: 'INROADS',
+  targetAlternatives: ['MAKE INROADS', 'IN ROADS', 'INROAD'],
+  hints: [
+    'The letters "AD" are literally located IN "ROS" (RO-AD-S).',
+    'Also a word meaning progress or an advance into an enemy territory or market.'
+  ],
+  explanation: '"AD" inside "ROS" spells "ROADS", indicating "IN ROADS" (or making inroads).'
+},
+
+// 18. ADVANCED - HYBRID (Word Math)
+{
+  id: 'hyb-a-4',
+  title: 'Enigma Logic Value',
+  category: 'hybrid',
+  difficulty: 'advanced',
+  mode: 'interactive',
+  type: 'word_math',
+  description: 'Sum the ordinal value of each letter (A=1 ... Z=26) in the word "CIPHER".',
+  word: 'CIPHER',
+  equationBreakdown: 'C(3) + I(9) + P(16) + H(8) + E(5) + R(18)',
+  targetAnswer: 59,
+  hints: [
+    'C=3, I=9, P=16, H=8, E=5, R=18.',
+    'Subtotals: (3 + 9) = 12; 12 + 16 = 28; 28 + 8 = 36; 36 + 5 = 41; 41 + 18 = ?'
+  ],
+  explanation: '3 (C) + 9 (I) + 16 (P) + 8 (H) + 5 (E) + 18 (R) = 59.'
+},
+
+// 19. ADVANCED - MATH (Speed Quiz)
+{
+  id: 'math-a-4',
+  title: 'The Counterfeit Coin Balance',
+  category: 'math',
+  difficulty: 'advanced',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'You have 9 identical-looking gold coins, but one is counterfeit and slightly lighter. Using a two-pan balance scale, what is the minimum number of weighings guaranteed to pinpoint the fake coin?',
+  options: [
+    '2',
+    '3',
+    '4',
+    '1'
+  ],
+  targetAnswer: '2',
+  hints: [
+    'Divide the 9 coins into 3 groups of 3 rather than halves.',
+    'Weigh group A vs group B. If balanced, the fake is in group C. You have isolated 3 coins in just 1 weighing.'
+  ],
+  explanation: 'Only 2 weighings are needed: Split into 3 groups of 3. Weigh 3 vs 3. If balanced, it is in the 3rd group; if unbalanced, it is in the lighter group. For weighing #2, take the 3 suspect coins and weigh 1 vs 1.'
+},
+
+// 20. ADVANCED - LANGUAGE (Speed Quiz)
+{
+  id: 'lang-a-4',
+  title: 'The Semordnilap Criterion',
+  category: 'language',
+  difficulty: 'advanced',
+  mode: 'quiz',
+  type: 'multiple_choice',
+  description: 'A "Palindrome" reads the same backwards and forwards (like RACECAR). What is a word that forms an entirely different valid word when spelled in reverse (such as DIAPER -> REPAID)?',
+  options: [
+    'Semordnilap',
+    'Ananym',
+    'Heteropalindrome',
+    'All of the above'
+  ],
+  targetAnswer: 'All of the above',
+  hints: [
+    'Notice what "Semordnilap" spells when read backwards!',
+    'Linguists use multiple overlapping colloquial and formal terms for reverse-word pairs.'
+  ],
+  explanation: 'All of these describe words that reverse into different words. "Semordnilap" is "palindromes" spelled backwards, while "ananym" and "heteropalindrome" are recognized linguistic terms.'
+}
     ];
   </script>
 
