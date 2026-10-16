@@ -979,7 +979,155 @@
       'Try cubic powers: What is 1³ + 2³? 1 + 8 = 9.',
       'Test row 2: 2³ + 3³ = 8 + 27 = 35. Now apply: 3³ + 4³.'
     ],
-    explanation: 'The rule is a³ + b³ = c. For row 3:
+    explanation: 'The rule is a³ + b³ = c. For row 3: 3³ + 4³ = 27 + 64 = 91.'
+  },
+
+  // 25. ADVANCED - MATH (Planetary Weight Equations)
+  {
+    id: 'math-a-3',
+    title: 'Orbital Resonance Equations',
+    category: 'math',
+    difficulty: 'advanced',
+    mode: 'interactive',
+    type: 'visual_algebra',
+    description: 'Solve the system of non-linear planetary weight symbols to find the final mystery sum.',
+    items: [
+      { icon: '🪐', name: 'Saturn', val: 7 },
+      { icon: '🚀', name: 'Rocket', val: 12 },
+      { icon: '⭐', name: 'Star', val: 9 }
+    ],
+    equations: [
+      '🪐 + 🪐 + 🪐 = 21',
+      '🚀 - 🪐 = 5',
+      '🚀 + ⭐ = 21',
+      '🪐 + 🚀 + ⭐ = ?'
+    ],
+    targetAnswer: 28,
+    inputHint: 'Enter final sum',
+    hints: [
+      'Saturn: 21 ÷ 3 = 7.',
+      'Rocket: Rocket - 7 = 5 → Rocket = 12. Star: 12 + Star = 21 → Star = 9.'
+    ],
+    explanation: 'Saturn = 7, Rocket = 12, Star = 9. Total: 7 + 12 + 9 = 28.'
+  },
+
+  // 26. ADVANCED - LANGUAGE (Facetious Pangram Vowels)
+  {
+    id: 'lang-a-3',
+    title: 'Orthographic Oddities',
+    category: 'language',
+    difficulty: 'advanced',
+    mode: 'quiz',
+    type: 'multiple_choice',
+    description: 'A "pangram" is a sentence using every letter of the alphabet. What is the name for a word that contains all five vowels (A, E, I, O, U) in exact alphabetical order?',
+    options: [
+      'Facetious',
+      'Sequioa',
+      'Supercalifragilistic',
+      'Euphonious'
+    ],
+    targetAnswer: 'Facetious',
+    hints: [
+      'Means treating serious issues with deliberately inappropriate humor.',
+      'Check the vowels: F-A-c-E-t-I-O-u-S (and even "y" if facetiously!).'
+    ],
+    explanation: '"Facetious" contains A, E, I, O, and U in strict ascending alphabetical order. (Add -ly and it even includes Y!)'
+  },
+
+  // 27. ADVANCED - HYBRID (Inroads Rebus)
+  {
+    id: 'hyb-a-3',
+    title: 'Cryptic Architectural Cipher',
+    category: 'hybrid',
+    difficulty: 'advanced',
+    mode: 'interactive',
+    type: 'rebus',
+    description: 'Analyze the typographic positioning and spatial layout to deduce the common English idiom.',
+    visualDisplay: `
+      <div class="flex flex-col items-center justify-center p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 select-none">
+        <div class="text-xs uppercase font-bold text-slate-500 mb-2">Visual Clue</div>
+        <div class="text-4xl font-extrabold tracking-widest text-slate-800 dark:text-slate-100 font-mono py-2">
+          RO<span class="text-emerald-500 font-black">AD</span>S
+        </div>
+        <div class="text-xs uppercase tracking-widest text-slate-400 mt-2">
+          [ AD is enclosed right inside of ROS ]
+        </div>
+      </div>
+    `,
+    targetAnswer: 'INROADS',
+    targetAlternatives: ['MAKE INROADS', 'IN ROADS', 'INROAD'],
+    hints: [
+      'The letters "AD" are literally located IN "ROS" (RO-AD-S).',
+      'Also a word meaning progress or an advance into an enemy territory or market.'
+    ],
+    explanation: '"AD" inside "ROS" spells "ROADS", indicating "IN ROADS" (or making inroads).'
+  },
+
+  // 28. ADVANCED - HYBRID (Cipher Word Math)
+  {
+    id: 'hyb-a-4',
+    title: 'Enigma Logic Value',
+    category: 'hybrid',
+    difficulty: 'advanced',
+    mode: 'interactive',
+    type: 'word_math',
+    description: 'Sum the ordinal value of each letter (A=1 ... Z=26) in the word "CIPHER".',
+    word: 'CIPHER',
+    equationBreakdown: 'C(3) + I(9) + P(16) + H(8) + E(5) + R(18)',
+    targetAnswer: 59,
+    hints: [
+      'C=3, I=9, P=16, H=8, E=5, R=18.',
+      'Subtotals: (3 + 9) = 12; 12 + 16 = 28; 28 + 8 = 36; 36 + 5 = 41; 41 + 18 = ?'
+    ],
+    explanation: '3 (C) + 9 (I) + 16 (P) + 8 (H) + 5 (E) + 18 (R) = 59.'
+  },
+
+  // 29. ADVANCED - MATH (Counterfeit Coin Weighing)
+  {
+    id: 'math-a-4',
+    title: 'The Counterfeit Coin Balance',
+    category: 'math',
+    difficulty: 'advanced',
+    mode: 'quiz',
+    type: 'multiple_choice',
+    description: 'You have 9 identical-looking gold coins, but one is counterfeit and slightly lighter. Using a two-pan balance scale, what is the minimum number of weighings guaranteed to pinpoint the fake coin?',
+    options: [
+      '2',
+      '3',
+      '4',
+      '1'
+    ],
+    targetAnswer: '2',
+    hints: [
+      'Divide the 9 coins into 3 groups of 3 rather than halves.',
+      'Weigh group A vs group B. If balanced, the fake is in group C. You have isolated 3 coins in just 1 weighing.'
+    ],
+    explanation: 'Only 2 weighings are needed: Split into 3 groups of 3. Weigh 3 vs 3. If balanced, it is in the 3rd group; if unbalanced, it is in the lighter group. For weighing #2, take the 3 suspect coins and weigh 1 vs 1.'
+  },
+
+  // 30. ADVANCED - LANGUAGE (Semordnilap Reverse Words)
+  {
+    id: 'lang-a-4',
+    title: 'The Semordnilap Criterion',
+    category: 'language',
+    difficulty: 'advanced',
+    mode: 'quiz',
+    type: 'multiple_choice',
+    description: 'A "Palindrome" reads the same backwards and forwards (like RACECAR). What is a word that forms an entirely different valid word when spelled in reverse (such as DIAPER -> REPAID)?',
+    options: [
+      'Semordnilap',
+      'Ananym',
+      'Heteropalindrome',
+      'All of the above'
+    ],
+    targetAnswer: 'All of the above',
+    hints: [
+      'Notice what "Semordnilap" spells when read backwards!',
+      'Linguists use multiple overlapping colloquial and formal terms for reverse-word pairs.'
+    ],
+    explanation: 'All of these describe words that reverse into different words. "Semordnilap" is "palindromes" spelled backwards, while "ananym" and "heteropalindrome" are recognized linguistic terms.'
+  }
+];
   </script>
 
   <!-- Application Logic & Controllers -->
