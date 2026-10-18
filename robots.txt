@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: http://quizfizz.app/sitemap.xml
